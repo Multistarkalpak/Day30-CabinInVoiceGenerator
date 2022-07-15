@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CabinInvoice
+namespace InvoiceGenerator
 {
-    public class CabinInvoice
+    public class InvoiceGenerator
     {
         public readonly int MINIMUM_COST_PER_KM;
         public readonly int COST_PER_TIME;
         public readonly int MINIMUM_FARE;
         public RideType rideType;
-        public CabinInvoice(RideType rideType)
-        {
+        public InvoiceGenerator(RideType rideType)
 
+        {
             this.rideType = rideType;
             if (RideType.NORMAL == rideType)
             {
@@ -22,41 +22,55 @@ namespace CabinInvoice
                 COST_PER_TIME = 1;
                 MINIMUM_FARE = 5;
             }
-
             else
             {
                 MINIMUM_COST_PER_KM = 15;
                 COST_PER_TIME = 2;
                 MINIMUM_FARE = 20;
             }
+
         }
-            public double CalculateTotalFair(double distance, int time )
+        //calulating for uc1 and uc 5 normal and premium
+        public double CalculateTotalFair(double distance, int time)
+        {
+            try
             {
-                try
+                if (distance <= 0)
                 {
-                    if (distance <= 0)
-                    {
-                        throw new CabInvoiceCustomException(CabInvoiceCustomException.ExceptionType.INVALID_ID_DISTANCE, "Distance is invalid");
-
-                    }
-                    else if (distance <= 0)
-                    {
-                        throw new CabInvoiceCustomException(CabInvoiceCustomException.ExceptionType.INVALIDID_TIME, "Time is valid");
-                    }
-                    else
-                    {
-                        double totalFare = 0;
-                        totalFare = distance * MINIMUM_COST_PER_KM + time * COST_PER_TIME;
-                        return Math.Max(totalFare, MINIMUM_FARE);
-                    }
+                    throw new CabInvoiceCustomException(CabInvoiceCustomException.ExceptionType.INVALID_ID_DISTANCE, "distance is invalid");
+                }
+                else if (distance <= 0)
+                {
+                    throw new CabInvoiceCustomException(CabInvoiceCustomException.ExceptionType.INVALIDID_TIME, "time is valid");
+                }
+                else
+                {
+                    double totalFare = 0;
+                    totalFare = distance * MINIMUM_COST_PER_KM + time * COST_PER_TIME;
+                    return Math.Max(totalFare, MINIMUM_FARE);
                 }
 
-                catch(CabInvoiceCustomException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return 0;
-                }
             }
-        
+            catch (CabInvoiceCustomException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return 0;
+            }
+            {
+
+            }
+        }
+        //method overloading for multiple rides
+        public double CalculateTotalFair(Ride[] rides)
+        {
+            double totalFair = 0;
+            foreach (Ride ride in rides)
+            {
+                totalFair += CalculateTotalFair(ride.distance, ride.time);
+            }
+
+            return Math.Max(totalFair, MINIMUM_FARE); ;
+        }
     }
+
 }

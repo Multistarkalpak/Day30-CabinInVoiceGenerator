@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InvoiceGenerator
+namespace CabinInvoice
 {
-
-    public enum RideType
+    internal class Invoice_Summary
     {
-        NORMAL, PREMIUM
     }
-
 }
